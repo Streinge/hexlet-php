@@ -1,6 +1,8 @@
 <?php
 
-print_r("- Are you hungry? " . " - Aaaarrrgh! \n");
-print_r(strlen("\n"));
-print_r(strlen('\n'));
-
+$eurosCount = 100;
+$stark = 'Arya';
+// BEGIN (write your solution here)
+$stark = print_r('');
+print_r($stark);
+// END
