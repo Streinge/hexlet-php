@@ -1,3 +1,6 @@
 <?php
 
-print_r(((8 / 2) + 5) - (-3 / 2));
+print_r("- Are you hungry? " . " - Aaaarrrgh! \n");
+print_r(strlen("\n"));
+print_r(strlen('\n'));
+
