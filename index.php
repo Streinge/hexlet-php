@@ -1,8 +1,9 @@
 <?php
 
-$eurosCount = 100;
-$stark = 'Arya';
-// BEGIN (write your solution here)
-$stark = print_r('');
-print_r($stark);
-// END
+function getCurrentYear()
+{
+    return (int) substr(date('Y-m-d'), 0, 4);
+}
+
+// Вызов функции
+print_r(getCurrentYear());
