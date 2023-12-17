@@ -1,17 +1,16 @@
 <?php
-function isPalindrome($str)
-{
-    $str = mb_convert_encoding($str, "UTF-8");
-    $middleIndex = ceil(mb_strlen($str) / 2);
-    $beginChar = '';
-    $endChar = '';
-    for ($i = 0; $i <= $middleIndex - 1; $i++){
-        $beginChar = mb_substr($str, $i, 1);
-        $endChar = mb_substr($str, - ($i + 1), 1);
-        if ($beginChar !== $endChar) {
-            return false;
-        }
+
+// BEGIN
+function  isHappy(string $number): bool
+{   
+    $sumBegin = 0;
+    $sumEnd = 0;
+    for ($i = 0; $i <= (strlen($number) - 1) / 2; $i++) {
+        echo $i . "\n";
+        $sumBegin = $sumBegin + (int) $number[$i];
+        $sumEnd = $sumEnd + (int) $number[- ($i + 1)];
     }
-    return true;
+
+    return $sumBegin === $sumEnd;
 }
-var_dump(isPalindrome('шалашаш'));
+var_dump(isHappy('00'));
