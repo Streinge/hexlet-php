@@ -2,13 +2,18 @@
 
 namespace Hexlet\Php\isPowerOfThree;
 
-function isPowerOfThree(int $number): bool
+function isPowerOfThree(int $num)
+// В отличие от моего решения для каждого числа степень
+// по новой не вычисляестя поэтому работает быстрее
 {
-    for ($i = 0; $i <= pow($number, 1 /3); $i++) {
-        if (pow(3, $i) === $number) {
+    $current = 1;
+    while ($current <= $num) {
+        if ($current === $num) {
             return true;
         }
+        $current *= 3;
     }
+
     return false;
 }
 
