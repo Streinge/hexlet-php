@@ -9,6 +9,10 @@ function isContinuousSequence($coll)
     }
     $start = $coll[0];
     foreach ($coll as $i => $item) {
+        echo $i, $item;
+        echo "\n";
+        // первый элемент массива суммируется с индексом
+        // и проверяется равен ли он текущему элементу массива
         if ($start + $i !== $item) {
             return false;
         }

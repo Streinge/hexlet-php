@@ -1,4 +1,5 @@
 <?php
-$number = 9;
-
-var_dump((int) round(pow($number, 1 / 3)));
+$sum = 0;
+$item = [1,2];
+$sum += $item[0] <=> $item[1];
+print_r($sum);
