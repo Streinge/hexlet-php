@@ -1,5 +1,6 @@
 <?php
-$sum = 0;
-$item = [1,2];
-$sum += $item[0] <=> $item[1];
-print_r($sum);
+
+$array1 = [1, 10, 3];
+$array2 = [10, 100, 35, 1];
+$result = array_merge($array1, $array2);
+print_r($result);
