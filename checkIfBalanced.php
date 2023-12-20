@@ -10,14 +10,20 @@ function checkIfBalanced(string $expression): bool
         if ($expression[$i] === '(') {
             array_push($stack, '(');
         } elseif ($expression[$i] === ')') {
-            array_pop($stack);
+            $status = array_pop($stack);
         }
-        print_r($stack);
     }
-    if (empty($stack)) {
-        return true;
-    } else return false;
+    if (!empty($stack) || $status === null) {
+        return false;
+    }
+    return true;
 }
 
 var_dump(checkIfBalanced('(5 + 6) * (7 + 8)/(4 + 3)')); // true
 var_dump(checkIfBalanced('(4 + 3))')); // false
+var_dump(checkIfBalanced('(')); // false
+var_dump(checkIfBalanced(')')); // false
+var_dump(checkIfBalanced(')()(')); // false
+var_dump(checkIfBalanced('3+5)()('));
+var_dump(checkIfBalanced('(()'));
+var_dump(checkIfBalanced('(1-(7+(3+5)*(2-1))'));
