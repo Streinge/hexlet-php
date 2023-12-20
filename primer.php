@@ -1,12 +1,27 @@
 <?php
 
-$array1 = [];
-$array2 = [1, [3, 2], 9];
-$type = gettype($array1);
-if ($type === 'array') {
-    echo $type;
+function rotatedMatrix(array $matrix): array
+{
+   $m = count($matrix);
+   [$firstRow] = $matrix;
+   $n = count($firstRow);
+   $result = [];
+   for ($j = 0; $j < $n; $j++) {
+       for ($i = 0; $i < $m; $i++) {
+           $result[$j][$i] = $matrix[$i][$n - $j - 1]; 
+       } 
+   }
+   return $result;
 }
 
-$array1 = [...$array2];
-print_r($array1);
+$array1 = [
+    [1, 2],
+    [3, 4],
+  ];
+foreach ($array1 as $b) echo json_encode($b),"\n";
+$res = rotatedMatrix($array1);
+foreach ($res as $b) echo json_encode($b),"\n";
+
+
+
 
