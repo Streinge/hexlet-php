@@ -3,20 +3,21 @@
 namespace Hexlet\Php\buildSnailPath;
 
 function rotatedMatrix(array $matrix): array
-{
-   if (empty($matrix)) {
+// функция поворачивает матрицу против часовой стрелки
+{    
+    if (empty($matrix)) {
     return $matrix;
-   }
+    }
     $m = count($matrix);
-   [$firstRow] = $matrix;
-   $n = count($firstRow);
-   $result = [];
-   for ($j = 0; $j < $n; $j++) {
-       for ($i = 0; $i < $m; $i++) {
-           $result[$j][$i] = $matrix[$i][$n - $j - 1]; 
-       } 
-   }
-   return $result;
+    [$firstRow] = $matrix;
+    $n = count($firstRow);
+    $result = [];
+    for ($j = 0; $j < $n; $j++) {
+        for ($i = 0; $i < $m; $i++) {
+            $result[$j][$i] = $matrix[$i][$n - $j - 1]; 
+        } 
+    }
+    return $result;
 }
 function buildSnailPath(array $matrix): array
 {
@@ -25,13 +26,18 @@ function buildSnailPath(array $matrix): array
     while (!empty($newMatrix)) {
         [$firstRow] = $newMatrix;
         $result = [...$result, ...$firstRow];
-        unset($newMatrix[0]);
-        rotatedMatrix($newMatrix);
+        // здесь делаем не удаление первой строки,
+        // а берем срез из массива с помощью функции array_slice
+        $newMatrix = array_slice($newMatrix, 1);
+        $newMatrix = rotatedMatrix($newMatrix);
     }
     return $result;
 }
 
-print_r(buildSnailPath([
+
+$matrix = [
     [1, 2],
     [3, 4],
-  ])); // [1, 2, 4, 3]
+  ];
+echo "Это вывод результата \n";
+var_dump(buildSnailPath($matrix));
