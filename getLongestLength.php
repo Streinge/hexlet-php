@@ -4,9 +4,16 @@ namespace Hexlet\Php\GetLongestLength;
 
 function findsSubstring(string $str): string
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 {
     echo "Строка ". $str . "\n";
     if (strlen($str) === 1) {
+=======
+// функция ищет подстроку с уникальными символами
+{
+    $size = strlen($str);
+    if ($size === 1 || empty($str)) {
+>>>>>>> Stashed changes
 =======
 // функция ищет подстроку с уникальными символами
 {
@@ -37,6 +44,7 @@ function findsSubstring(string $str): string
 
 function getLongestLength(string $str)
 {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     if (strlen($str) === 1) {
         return $str;
@@ -75,8 +83,25 @@ echo getLongestLength($str) . "\n";
     }
     return $LongestLength;
 }
+=======
+    $size = strlen($str);
+    $LongestLength = 0;
+    for ($i = 0; $i < $size; $i++) {
+        $sliceString = substr($str, $i);
+        $subString = findsSubstring($sliceString);
+        $sizeSubstring = strlen($subString);
+        if ($sizeSubstring > $LongestLength) {
+            $LongestLength = $sizeSubstring;
+        }
+    }
+    return $LongestLength;
+}
+>>>>>>> Stashed changes
 
 
 $str = 'j12j23j754';
 echo "Наибольшая длина = " . getLongestLength($str) . "\n";
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
