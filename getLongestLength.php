@@ -3,26 +3,41 @@
 namespace Hexlet\Php\GetLongestLength;
 
 function findsSubstring(string $str): string
+<<<<<<< Updated upstream
 {
     echo "Строка ". $str . "\n";
     if (strlen($str) === 1) {
+=======
+// функция ищет подстроку с уникальными символами
+{
+    $size = strlen($str);
+    if ($size === 1 || empty($str)) {
+>>>>>>> Stashed changes
         return $str;
     }
     $firstChar = $str[0];
-    $substr = $firstChar;
-    $size = strlen($str);
+    $newSubstr = $firstChar;
     for ($i = 1; $i < $size; $i++) {
-        if ($str[$i] === $firstChar) {
-            return findsSubstring(substr($substr, 1));
+        if ($str[$i] === $firstChar || $i === $size - 1) {
+            if ($i === $size - 1) {
+                $newSubstr .= "$str[$i]";
+            }
+            $testSubstr = substr($newSubstr, 1);
+            // проверяю, что все символы найденной подстроки уникальные
+            $testSubstr  = findsSubstring($testSubstr);
+            $newFirstChar = $newSubstr[0];
+            $newSubstr = "{$newFirstChar}{$testSubstr}";
+            return $newSubstr;
         } else {
-            $substr .= "{$str[$i]}";
+            $newSubstr .= "$str[$i]";
         }
+    
     }
-    return $substr;
 }
 
 function getLongestLength(string $str)
 {
+<<<<<<< Updated upstream
     if (strlen($str) === 1) {
         return $str;
     }
@@ -47,3 +62,21 @@ function getLongestLength(string $str)
 }
 $str = 'qweqrty';
 echo getLongestLength($str) . "\n";
+=======
+    $size = strlen($str);
+    $LongestLength = 0;
+    for ($i = 0; $i < $size; $i++) {
+        $sliceString = substr($str, $i);
+        $subString = findsSubstring($sliceString);
+        $sizeSubstring = strlen($subString);
+        if ($sizeSubstring > $LongestLength) {
+            $LongestLength = $sizeSubstring;
+        }
+    }
+    return $LongestLength;
+}
+
+
+$str = 'j12j23j754';
+echo "Наибольшая длина = " . getLongestLength($str) . "\n";
+>>>>>>> Stashed changes
