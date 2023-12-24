@@ -3,30 +3,10 @@
 namespace Hexlet\Php\GetLongestLength;
 
 function findsSubstring(string $str): string
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-{
-    echo "Строка ". $str . "\n";
-    if (strlen($str) === 1) {
-=======
 // функция ищет подстроку с уникальными символами
 {
     $size = strlen($str);
     if ($size === 1 || empty($str)) {
->>>>>>> Stashed changes
-=======
-// функция ищет подстроку с уникальными символами
-{
-    $size = strlen($str);
-    if ($size === 1 || empty($str)) {
->>>>>>> Stashed changes
-=======
-// функция ищет подстроку с уникальными символами
-{
-    $size = strlen($str);
-    if ($size === 1 || empty($str)) {
->>>>>>> Stashed changes
         return $str;
     }
     $firstChar = $str[0];
@@ -51,34 +31,6 @@ function findsSubstring(string $str): string
 
 function getLongestLength(string $str)
 {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    if (strlen($str) === 1) {
-        return $str;
-    }
-    $lengthString = strlen($str);
-    for ($i = 0; $i < $lengthString; $i++) {
-        // echo "i = ". $i . "\n";
-        $firstChar = $str[$i];
-        // echo "firstChar = ". $firstChar . "\n";
-        $sliceStr = substr($str, $i + 1);
-        // echo "sliceStr = ". $sliceStr . "\n";
-        $lengthSlice = strlen($sliceStr);
-        $uniqueString = $firstChar;
-        for ($j = 0; $j < $lengthSlice; $j++) {
-            if ($sliceStr[$j] !== $firstChar) {
-                $uniqueString .= "$sliceStr[$j]";
-            } else {
-                break;
-            }
-        }
-        echo getLongestLength($uniqueString) . "\n";
-    }
-}
-$str = 'qweqrty';
-echo getLongestLength($str) . "\n";
-=======
     $size = strlen($str);
     $LongestLength = 0;
     for ($i = 0; $i < $size; $i++) {
@@ -91,42 +43,3 @@ echo getLongestLength($str) . "\n";
     }
     return $LongestLength;
 }
-=======
-    $size = strlen($str);
-    $LongestLength = 0;
-    for ($i = 0; $i < $size; $i++) {
-        $sliceString = substr($str, $i);
-        $subString = findsSubstring($sliceString);
-        $sizeSubstring = strlen($subString);
-        if ($sizeSubstring > $LongestLength) {
-            $LongestLength = $sizeSubstring;
-        }
-    }
-    return $LongestLength;
-}
->>>>>>> Stashed changes
-=======
-    $size = strlen($str);
-    $LongestLength = 0;
-    for ($i = 0; $i < $size; $i++) {
-        $sliceString = substr($str, $i);
-        $subString = findsSubstring($sliceString);
-        $sizeSubstring = strlen($subString);
-        if ($sizeSubstring > $LongestLength) {
-            $LongestLength = $sizeSubstring;
-        }
-    }
-    return $LongestLength;
-}
->>>>>>> Stashed changes
-
-
-$str = 'j12j23j754';
-echo "Наибольшая длина = " . getLongestLength($str) . "\n";
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
