@@ -1,15 +1,10 @@
 <?php
 
-$matrix = [
-    [0, 12, 13, 14],
-    [21, 22, 23, 24],
-    [31, 32, 33, 34],
-    [41, 42, 43, 44],
-];
+$array = ["hi", "how", "are", "you"];
+$result = [];
 
-[$numberColumns] = $matrix;
+foreach ($array as $key => $value) {
+    $result[] = $key;
+}
 
-var_dump(empty($matrix[10][10]));
-
-
-
+print_r($result);
