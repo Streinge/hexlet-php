@@ -1,10 +1,8 @@
 <?php
 
-$array = ["hi", "how", "are", "you"];
-$result = [];
-
-foreach ($array as $key => $value) {
-    $result[] = $key;
+$array = [];
+$key = crc32('key') % 1000;
+for ($i = 0; $i <= $key; $i++) {
+    $array[] = null;
 }
-echo "result = \n";
-print_r($result);
+var_dump($array[$key]);
