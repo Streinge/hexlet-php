@@ -6,5 +6,5 @@ $result = [];
 foreach ($array as $key => $value) {
     $result[] = $key;
 }
-
+echo "result = \n";
 print_r($result);
