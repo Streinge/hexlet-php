@@ -1,8 +1,8 @@
 <?php
 
-require_once 'toRna.php';
+require_once 'toRoman.php';
 
-use function Hexlet\Php\toRna;
+use function Hexlet\Php\toRoman;
 
-echo toRna('ACGTGGTCTTAA') . "\n";
+echo toRoman(1024) . "\n";
 // → 'UGCACCAGAAUU'
