@@ -14,12 +14,13 @@ function scrabble(string $set, string $word)
             $setArray[$newSet[$i]] = 1;
         }
     }
-    $charArray = str_split($word);
+    $charArray = str_split($newWord);
     foreach ($charArray as $char) {
-        (if )
+        if (!array_key_exists($char, $setArray) || $setArray[$char] === 0) {
+            return false;
+        } else {
+            $setArray[$char] -= 1;
+        }
     }
-
-    return $setArray;
+    return true;
 }
-
-var_dump(scrabble('kakdsjhgfk', 'hdkas'));
