@@ -11,4 +11,5 @@ $users = [
   ['name' => 'Sansa', 'birthday' => '2001-03-20'],
   ['name' => 'Tisha', 'birthday' => '1992-02-27']
 ];
-var_dump(firstN($users));
+var_dump(date("Y", strtotime('1988-11-19')));
+
