@@ -1,2 +1,4 @@
 /vendor/
 primer.php
+composer.json
+composer.lock
