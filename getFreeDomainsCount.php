@@ -8,8 +8,13 @@ const FREE_EMAIL_DOMAINS = [
 
 function getFreeDomainsCount(array $mails)
 {
-    $onlyDomaind = array_map(fn($mail) => substr($mail, stripos($mail, '@') + 1), $mails);
-    return $onlyDomaind;
+    $onlyDomains = array_map(fn($mail) => substr($mail, stripos($mail, '@') + 1), $mails);
+    $freeDomains = array_filter($onlyDomains, fn($onlyDomain) => in_array($onlyDomain, FREE_EMAIL_DOMAINS));
+    $numberFreeDomains = array_reduce($freeDomains, function ($acc, $domain) {
+        $acc[$domain] = ($acc[$domain] ?? 0) + 1;
+        return $acc;
+    }, []);
+    return $numberFreeDomains;
 }
 
 $emails = [
