@@ -14,43 +14,26 @@ function makeFlattenTree($tree, $flattenList, $parent = null)
     $newAcc = array_merge($flattenList, [$nameCity => [$parent, $children]]);
     return array_reduce($branches, fn($iAcc, $child) => makeFlattenTree($child, $iAcc, $nameCity), $newAcc);
 }
-
-function reverseСonversionChild($children, $list)
+function findPathToRoot($list, $node, $oldRoot)
 {
-    $result = array_reduce($children, function ($acc, $child) use ($list) {
-
-        $kids = $list[$child][1] ?? [];
-
-        $acc[] = ($kids === []) ? [$child] : [$child, [...reverseСonversionChild($kids, $list)]];
-
-        return $acc;
-    }, []);
-
-    return $result;
-}
-
-function goingUpTree($parent, $node, $list)
-{
-    $newParent = $list[$parent][0];
-    $children = $list[$parent][1];
-    $filtered = array_filter($children, fn($child) => ($child !== $node));
-    if ($newParent) {
-        return [goingUpTree($newParent, $parent, $list), ...reverseСonversionChild($filtered, $list)];
+    $parentNode = $list[$node][0];
+    if ($parentNode !== $oldRoot) {
+        $acc[] = $parentNode;
+        $acc[] = findPathToRoot($list, $parentNode, $oldRoot);
     } else {
-        return [$parent, reverseСonversionChild($filtered, $list)];
+        return $node;
     }
+    return $acc;
 }
 
 function transform($tree, $node)
 {
     $list = makeFlattenTree($tree, [], null);
-    [$parent, $children] = $list[$node];
-    $newChildren = reverseСonversionChild($children, $list);
-    $childrenFromParent = goingUpTree($parent, $node, $list);
-    $children = [$childrenFromParent, ...$newChildren];
-    $result = [$node, $children];
+    $oldRoot = $tree[0];
+    $acc[] = $node;
+    $acc[] = findPathToRoot($list, $node, $oldRoot);
 
-    return $result;
+    return $acc;
 }
 
 /*$tree = ['A', [
@@ -130,7 +113,7 @@ $expected1 = ['F', [
                 ['O'],
             ]],
         ]];
-var_dump(transform($tree, 'F') === $expected1);
+//var_dump(transform($tree, 'F') === $expected1);
 print_r(transform($tree, 'F'));
 
 /*$expected2 = ['I', [
