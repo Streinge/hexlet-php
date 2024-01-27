@@ -22,18 +22,12 @@ function makeFlattenTree($tree, $flattenList, $parent = null)
 
 function reverseСonversionChild($children, $list)
 {
-    // здесь $children это массив названий узлов массива $list
-    // 5. если у ребенка нет детей то есть массив пустой
-    // то возвращаем пустой массив
+
     echo "Это children на входе в функцию \n";
     print_r($children);
     echo "\n";
 
-
-    // 3. Для каждого дитя из списка
     $result = array_reduce($children, function ($acc, $child) use ($list) {
-        // 4. Берем значение $list по ключу $child и записываем в аккум
-        // имя родителя и рекурсивно запускаем нашу функцию для обработки детей
         echo "Это child  \n";
         print_r($child);
         echo "\n";
@@ -45,11 +39,7 @@ function reverseСonversionChild($children, $list)
         echo "Это kids  \n";
         print_r($kids);
         echo "\n";
-        if ($kids === []) {
-            $acc[] = [$child];
-        } else {
-            $acc[] = [$child, [...reverseСonversionChild($kids, $list)]];
-        }
+        $acc[] = ($kids === []) ? [$child] : [$child, [...reverseСonversionChild($kids, $list)]];
         echo "Это АККУМУЛЯТОР  \n";
         print_r($acc);
         echo "\n";
@@ -59,15 +49,42 @@ function reverseСonversionChild($children, $list)
     return $result;
 }
 
+function goingUpTree($parent, $node, $list)
+{
+    echo "Это parent на входе в функцию Вверх по дереву \n";
+    print_r($parent);
+    echo "\n";
+
+    if (!$parent) {
+        return;
+    }
+
+    $newParent = $list[$parent][0];
+    echo "Это newParent на входе в функцию Вверх по дереву \n";
+    print_r($newParent);
+    echo "\n";
+    $children = $list[$parent][1];
+    echo "Это children в функции Вверх по дереву \n";
+    print_r($children);
+    echo "\n";
+    $filtered = array_filter($children, fn($child) => ($child !== $node));
+    $result = reverseСonversionChild($filtered, $list);
+    return goingUpTree($newParent, $parent, $list);
+
+}
+
 function transform($tree, $node)
 {
     $list = makeFlattenTree($tree, [], null);
     // 1. находим элемент $list c ключом $node и берем значение родителя и детей
     [$parent, $children] = $list[$node];
     // 2. для каждого списка детей запускаем рекурсивную функцию передаем в нее список названий узлов
-    $newChildren = reverseСonversionChild($children, $list);
+    //$newChildren = reverseСonversionChild($children, $list);
+    $childrenFromParent = goingUpTree($parent, $node, $list);
 
-    return $newChildren;
+    //$result = [$node, $newChildren];
+
+    return $list;
 }
 
 $tree = ['A', [                              //     A
@@ -76,13 +93,48 @@ $tree = ['A', [                              //     A
                           ['G'],            //   /   / \
                           ['I'],           //   D   E   F
                           ]              //    / \        
-                    ]],                 //    G   I 
+                    ]                   //    G   I 
+                    ]
+              ],                 
               ['C', [                       
-                    ['E'],             
+                    ['E'],     
                     ['F'],               
-                    ]],
-               ]]
+                    ]
+              ],
+              ]
         ];
 
 
 print_r(transform($tree, 'B'));
+
+$tree = ['A', [
+              ['B', [
+                    ['D', [
+                          ['H'],
+                          ]
+                    ],
+                    ['E'],
+                    ]
+              ],
+              ['C', [
+                    ['F', [
+                          ['I', [
+                                ['M'],
+                                ]
+                          ],
+                          ['J', [
+                                ['N'],
+                                ['O'],
+                                ]
+                          ],
+                          ]
+                    ],
+                    ['G', [
+                          ['K'],
+                          ['L'],
+                          ]
+                    ],
+                    ]
+              ],
+              ]
+         ];
