@@ -28,16 +28,15 @@ function reverseСonversionChild($children, $list)
     echo "Это children на входе в функцию \n";
     print_r($children);
     echo "\n";
-    if ($children === []) {
-        return [];
-    }
 
 
     // 3. Для каждого дитя из списка
     $result = array_reduce($children, function ($acc, $child) use ($list) {
         // 4. Берем значение $list по ключу $child и записываем в аккум
         // имя родителя и рекурсивно запускаем нашу функцию для обработки детей
-
+        echo "Это child  \n";
+        print_r($child);
+        echo "\n";
         $parent = $list[$child][0];
         echo "Это parent  \n";
         print_r($parent);
@@ -46,8 +45,14 @@ function reverseСonversionChild($children, $list)
         echo "Это kids  \n";
         print_r($kids);
         echo "\n";
-        $acc[] = [$parent, [reverseСonversionChild($kids, $list)]];
-
+        if ($kids === []) {
+            $acc[] = [$child];
+        } else {
+            $acc[] = [$child, [...reverseСonversionChild($kids, $list)]];
+        }
+        echo "Это АККУМУЛЯТОР  \n";
+        print_r($acc);
+        echo "\n";
         return $acc;
     }, []);
 
@@ -62,7 +67,7 @@ function transform($tree, $node)
     // 2. для каждого списка детей запускаем рекурсивную функцию передаем в нее список названий узлов
     $newChildren = reverseСonversionChild($children, $list);
 
-    return;
+    return $newChildren;
 }
 
 $tree = ['A', [                              //     A
