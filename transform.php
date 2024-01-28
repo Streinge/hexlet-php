@@ -14,46 +14,69 @@ function makeFlattenTree($tree, $flattenList, $parent = null)
     $newAcc = array_merge($flattenList, [$nameCity => [$parent, $children]]);
     return array_reduce($branches, fn($iAcc, $child) => makeFlattenTree($child, $iAcc, $nameCity), $newAcc);
 }
-
-function reverseСonversionChild($children, $list)
+function findPathToRoot($list, $node, $oldRoot, &$acc = [])
 {
+    [$parentNode] = $list[$node];
+    if ($node !== $oldRoot) {
+        $acc[] = $node;
+        findPathToRoot($list, $parentNode, $oldRoot, $acc);
+    } else {
+        $acc[] = $node;
+    }
+    return $acc;
+}
+
+function reverseConverted($children, $list)
+{
+    if (!$children) {
+        return;
+    }
     $result = array_reduce($children, function ($acc, $child) use ($list) {
-
-        $kids = $list[$child][1] ?? [];
-
-        $acc[] = ($kids === []) ? [$child] : [$child, [...reverseСonversionChild($kids, $list)]];
-
+        $newChildren = $list[$child][1] ?? [];
+        $acc[] = ($newChildren === []) ? [$child] : [$child, reverseConverted($newChildren, $list)];
         return $acc;
     }, []);
 
     return $result;
 }
 
-function goingUpTree($parent, $node, $list)
-{
-    $newParent = $list[$parent][0];
-    $children = $list[$parent][1];
-    $filtered = array_filter($children, fn($child) => ($child !== $node));
-    if ($newParent) {
-        return [goingUpTree($newParent, $parent, $list), ...reverseСonversionChild($filtered, $list)];
-    } else {
-        return [$parent, reverseСonversionChild($filtered, $list)];
-    }
-}
-
 function transform($tree, $node)
 {
     $list = makeFlattenTree($tree, [], null);
-    [$parent, $children] = $list[$node];
-    $newChildren = reverseСonversionChild($children, $list);
-    $childrenFromParent = goingUpTree($parent, $node, $list);
-    $children = [$childrenFromParent, ...$newChildren];
-    $result = [$node, $children];
+    [$oldRoot] = $tree;
+    
+    $pathRoot = findPathToRoot($list, $node, $oldRoot);
+
+    $newList = array_reduce($pathRoot, function ($acc, $key) use ($list) {
+        [$parent, $children] = $list[$key];
+        $flattenArray = [$parent, ...$children];
+        $filteredFlattenArray = array_filter($flattenArray, fn($child) => (!empty($child)));
+        $acc[$key] = $filteredFlattenArray;
+        return $acc;
+    }, []);
+
+    $newNode = $node;
+
+    $changedList = array_reduce(array_keys($newList), function ($acc, $key) use ($newList, &$newNode) {
+        $children = $newList[$key];
+        $filteredChildren = array_filter($children, fn($child) => ($child !== $newNode));
+        $acc[$key] = ($key === $newNode) ? [null, $children] : [$newNode, $filteredChildren];
+        $newNode = $key;
+        return $acc;
+    }, []);
+
+    $keysChangedItems = array_keys($changedList);
+
+    $filteredList = array_filter($list, fn($key) => !in_array($key, $keysChangedItems), ARRAY_FILTER_USE_KEY);
+
+    $transformList = array_merge($changedList, $filteredList);
+
+    $result = [$node, reverseConverted($transformList[$node][1], $transformList)];
 
     return $result;
 }
 
-/*$tree = ['A', [
+$tree = ['A', [
               ['B', [
                     ['D'],
                     ]
@@ -81,8 +104,8 @@ $expected = ['B', [
             ];
 
             //
-var_dump(transform($tree, 'B') === $expected);
-print_r(transform($tree, 'B'));*/
+//var_dump(transform($tree, 'B') === $expected);
+//print_r(transform($tree, 'B'));
 
 $tree = ['A', [
     ['B', [
@@ -130,10 +153,10 @@ $expected1 = ['F', [
                 ['O'],
             ]],
         ]];
-var_dump(transform($tree, 'F') === $expected1);
-print_r(transform($tree, 'F'));
+//var_dump(transform($tree, 'F') === $expected1);
+//print_r(transform($tree, 'F'));
 
-/*$expected2 = ['I', [
+$expected2 = ['I', [
     ['F', [
         ['C', [
             ['A', [
@@ -158,4 +181,4 @@ print_r(transform($tree, 'F'));
 ]];
 
 var_dump(transform($tree, 'I') === $expected2);
-print_r(transform($tree, 'I'));*/
+print_r(transform($tree, 'I'));
