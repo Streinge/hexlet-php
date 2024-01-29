@@ -19,16 +19,23 @@ function combine($branch1, $branch2)
 {
     $listBranch1 = makeFlattenTree($branch1, [], null);
     $listBranch2 = makeFlattenTree($branch2, [], null);
-    $keys1 = array_keys($listBranch1);
-    $keys2 = array_keys($listBranch2);
-    $result = array_reduce($keys1, function ($acc, $key) use ($keys2, $listBranch1, $listBranch2) {
-        if (!in_array($key, $keys2)) {
-            $acc[$key] = $listBranch1[$key];
-        } else {
-            
+
+    $diff = array_intersect_key($listBranch1, $listBranch2);
+    $keysDiff = array_keys($diff);
+
+    $filteredKeysDiff = array_filter($keysDiff, function ($key) use ($listBranch1, $listBranch2) {
+        $children1 = $listBranch1[$key][1] ?? [];
+        $children2 = $listBranch2[$key][1] ?? [];
+        return empty(array_intersect($children1, $children2));
+
+    });
+
+    $newListBranch1 = array_map(function ($node) use ($filteredKeysDiff, $listBranch1) {
+        if (!in_array($key, $filteredKeysDiff)) {
+            acc[$key] = $listBranch1[$key];
         }
-    }, []);
-    return;
+    })
+    return $filteredKeysDiff;
 }
 
 $branch1 = ['A', [
