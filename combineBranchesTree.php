@@ -15,27 +15,50 @@ function makeFlattenTree($tree, $flattenList, $parent = null)
     return array_reduce($branches, fn($iAcc, $child) => makeFlattenTree($child, $iAcc, $nameCity), $newAcc);
 }
 
-function combine($branch1, $branch2)
+function buildsNewBranch(&$listBranchBase, $branchConnected)
 {
-    $listBranch1 = makeFlattenTree($branch1, [], null);
-    $listBranch2 = makeFlattenTree($branch2, [], null);
-
-    $diff = array_intersect_key($listBranch1, $listBranch2);
+    $diff = array_intersect_key($listBranchBase, $branchConnected);
     $keysDiff = array_keys($diff);
 
-    $filteredKeysDiff = array_filter($keysDiff, function ($key) use ($listBranch1, $listBranch2) {
+    $filteredKeysDiff = array_filter($keysDiff, function ($key) use ($listBranchBase, $branchConnected) {
         $children1 = $listBranch1[$key][1] ?? [];
         $children2 = $listBranch2[$key][1] ?? [];
         return empty(array_intersect($children1, $children2));
-
     });
 
-    $newListBranch1 = array_map(function ($node) use ($filteredKeysDiff, $listBranch1) {
-        if (!in_array($key, $filteredKeysDiff)) {
-            acc[$key] = $listBranch1[$key];
+    $newListBranch1 = array_reduce(array_keys($listBranchBase), function ($acc, $key) use ($filteredKeysDiff, $listBranchBase, $branchConnected) {
+        if (!in_array($key, $filteredKeysDiff) || !array_key_exists('1', $branchConnected[$key])) {
+            echo "Это кеу = " . $key . "\n";
+            $acc[$key] = $listBranchBase[$key];
+            echo "А это дети = \n";
+            print_r($listBranchBase[$key]);
+            echo "\n";
+        } else {
+            [$parent1] = $listBranchBase[$key];
+            $children1 = $listBranch1[$key][1] ?? [];
+            $children2 = $branchConnected[$key][1];
+            $newChildren = array_values($children1 + $children2);
+            $acc[$key] = [$parent1, $newChildren];
         }
-    })
-    return $filteredKeysDiff;
+        return $acc;
+    }, []);
+
+    $newListBranchBase = $newListBranch1 + $branchConnected;
+    return $newListBranchBase;
+}
+
+
+function combine($branchBase, ...$branches)
+{
+    $listBranchBase = makeFlattenTree($branchBase, [], null);
+
+    $result = array_reduce($branches, function ($acc, $branch) use ($listBranchBase) {
+        $listBranchConnected = makeFlattenTree($branch, [], null);
+        $acc = buildsNewBranch($listBranchBase, $listBranchConnected);
+        return $acc;
+    }, []);
+
+    return $result;
 }
 
 $branch1 = ['A', [
