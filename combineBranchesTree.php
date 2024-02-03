@@ -15,75 +15,142 @@ function makeFlattenTree($tree, $flattenList, $parent = null)
     return array_reduce($branches, fn($iAcc, $child) => makeFlattenTree($child, $iAcc, $nameCity), $newAcc);
 }
 
-function buildsNewBranch(&$listBranchBase, $branchConnected)
+function buildsNewBranch($listBranchBase, $branchConnected)
 {
-    $matchingList = array_intersect_key($listBranchBase, $branchConnected);
-    $keysMatch = array_keys($matchingList);
-    //echo "Ключи, которые совпадают = \n";
-    //print_r($keysMatch);
-    //echo "\n";
 
-    $filteredKeysMatch = array_filter($keysMatch, function ($key) use ($listBranchBase, $branchConnected) {
-        //echo "Ключ = \n";
-        //print_r($key);
-        //echo "\n";
+    $rootOld = array_key_first($branchConnected);
+    $newParent = $branchConnected[$rootOld][1][0];
+    
+    $keysBase = array_keys($listBranchBase);
 
-        $children1 = $listBranchBase[$key][1] ?? [];
-        $children2 = $branchConnected[$key][1] ?? [];
-        //echo "children1 = \n";
-        //print_r($children1);
-        //echo "\n";
-        //echo "children2 = \n";
-        //print_r($children2);
-        //echo "\n";
-        return  !empty(array_diff($children2, $children1));
-    });
-    //echo "отфильтрованные ключи = \n";
-    //print_r($filteredKeysMatch);
-    //echo "\n";
-    //print_r($filteredKeysDiff);
-    // !array_key_exists('1', $branchConnected[$key]
-    $newListBranch1 = array_reduce(array_keys($listBranchBase), function ($acc, $key) use ($filteredKeysMatch, $listBranchBase, $branchConnected) {
-        if (!in_array($key, $filteredKeysMatch) || !array_key_exists('1', $branchConnected[$key])) {
-            //echo "Это кеу = " . $key . "\n";
-            $acc[$key] = $listBranchBase[$key];
-            //echo "А это дети = \n";
-            // print_r($listBranchBase[$key]);
-            //echo "\n";
+
+
+    # меняю присоединяемую ветку
+    $modifiedBranchConnected = array_reduce(array_keys($branchConnected), function ($acc, $key) use ($branchConnected, $newParent, $keysBase) {
+
+        $parent = $branchConnected[$key][0];
+        $children = $branchConnected[$key][1] ?? [];
+        # формирую новых детей
+        $newKids = function ($children) use ($keysBase) {
+
+            $result = array_map(function ($child) use ($keysBase) {
+            # если детей из присоединяемой ветки нет в базовом, то
+            # их беру - других нет
+                if (!in_array($child, $keysBase)) {
+                    return $child;
+                }
+            }, $children);
+            $result = array_filter($result, fn($kid) => !is_null($kid));
+            sort($result);
+            return $result;
+        };
+        $kids = $newKids($children);
+
+        # обрабатываю корень присоединяемой ветки
+        if (empty($parent)) {
+
+            # устанавливаю ему родителя - новый корень и отфильтрованных детей
+            $acc[$key] = (empty($kids)) ? [$newParent] : [$newParent, $kids];
+
+            # если в присоединяемой ветке нет узла с корнем, как у базовой ветки
+            # то добавляю его в дети ему добавляю бывший корень, чтобы потом при обработке
+            # базовой ветки его можно было добавить в результат
+            if (empty($branchConnected[$newParent])) {
+                $acc[$newParent] = [null, [$key]];
+            } else {
+                $childrenOther = $branchConnected[$newParent][1] ?? [];
+                # если этот узел есть, то просто в дети к ниму добавляю бывший корень.
+                $childrenOther[] = $key;
+
+                $otherKids = $newKids($childrenOther);
+
+                sort($otherKids);
+                $acc[$newParent] = ($otherKids === []) ? [$branchConnected[$newParent][0]] : [$branchConnected[$newParent][0], $otherKids];
+            }
+            return $acc;
+        } elseif (!empty($acc[$key])) {
+            return $acc;
+        }
+        $acc[$key] = (empty($kids)) ? [$branchConnected[$key][0]] : [$branchConnected[$key][0], $kids];
+        return $acc;
+    }, []);
+
+    
+    /*$modifiedBranchConnected = array_reduce(array_keys($modifiedBranchConnected), function ($acc, $key) use ($listBranchBase, $modifiedBranchConnected) {
+        $parent = ((array_key_exists($key, $listBranchBase)) ? $key : array_key_first($listBranchBase));
+
+        $acc[$key] = empty($modifiedBranchConnected[$key][1]) ? [$parent] : [$parent, $modifiedBranchConnected[$key][1]];
+        return $acc;
+    }, []);*/
+
+
+    $matchingKeys = array_intersect(array_keys($listBranchBase), array_keys($modifiedBranchConnected));
+
+    $changedBaseBranch = array_reduce(array_keys($listBranchBase), function ($acc, $key) use ($listBranchBase, $modifiedBranchConnected, $matchingKeys) {
+        if (in_array($key, $matchingKeys)) {
+
+            $kidsBase = $listBranchBase[$key][1] ?? [];
+            
+            $kidsConnect = $modifiedBranchConnected[$key][1] ?? [];
+
+            $diff = array_diff($kidsConnect, $kidsBase);
+            
+            $kidsBase = [...$kidsBase, ...$diff];
+
+            sort($kidsBase);
+
+            $acc[$key] = !empty($kidsBase) ? [$listBranchBase[$key][0], $kidsBase] : [$listBranchBase[$key][0]];
         } else {
-            [$parent1] = $listBranchBase[$key];
-            $children1 = $listBranchBase[$key][1] ?? [];
-            $children2 = $branchConnected[$key][1] ?? [];
-            $newChildren = array_values(array_unique([...$children1, ...$children2]));
-            $acc[$key] = [$parent1, $newChildren];
+            $acc[$key] = $listBranchBase[$key];
         }
         return $acc;
     }, []);
 
-    $newListBranchBase = $newListBranch1 + $branchConnected;
-    return $newListBranchBase;
+    $diffNodes = array_diff_key($modifiedBranchConnected, $changedBaseBranch);
+    
+    $result = [...$changedBaseBranch, ...$diffNodes,];
+
+    return $result;
 }
 
-
-function combine($branchBase, ...$branches)
+function reverseConverted($children, $list)
 {
-    $listBranchBase = makeFlattenTree($branchBase, [], null);
-
-    $result = array_reduce($branches, function ($acc, $branch) use ($listBranchBase) {
-        $listBranchConnected = makeFlattenTree($branch, [], null);
-        $acc[] = buildsNewBranch($listBranchBase, $listBranchConnected);
+    if (!$children) {
+        return;
+    }
+    $result = array_reduce($children, function ($acc, $child) use ($list) {
+        $newChildren = $list[$child][1] ?? [];
+        $acc[] = ($newChildren === []) ? [$child] : [$child, reverseConverted($newChildren, $list)];
         return $acc;
     }, []);
 
     return $result;
 }
 
+function combine($branchBase, ...$branches)
+{
+
+    $listBranchBase = makeFlattenTree($branchBase, [], null);
+    foreach ($branches as $branch) {
+        $listBranch = makeFlattenTree($branch, [], null);
+        $listBranchBase = buildsNewBranch($listBranchBase, $listBranch);
+    }
+    //$listBranch = makeFlattenTree($branches, [], null);
+    //$listNewBranch = buildsNewBranch($listBranchBase, $listBranch);
+
+    $root = array_key_first($listBranchBase);
+    $children = $listBranchBase[$root][1];
+    $new = [$root, reverseConverted($children, $listBranchBase)];
+    
+    return $new;
+}
+
 $branch1 = ['A', [
-    ['B', [
-        ['C'],
-        ['D'],
-    ]],
-]];
+                 ['B', [
+                       ['C'],
+                       ['D'],
+                       ]],
+                 ]];
 
 $branch2 = ['B', [
     ['D', [
@@ -102,52 +169,70 @@ $branch3 = ['I', [
                   ]];
 
 $expected1 = ['A', [
-    ['B', [
-        ['C'],
-        ['D', [
-            ['E'],
-            ['F'],
-        ]],
-        ['H'],
-    ]],
-    ['I'],
-]];
+                   ['B', [
+                         ['C'],
+                         ['D', [
+                               ['E'],
+                               ['F'],
+                               ]
+                         ],
+                         ['H'],
+                         ]
+                   ],
+                   ['I'],
+                   ]
+             ];
 
 $expected2 = ['B', [
-    ['A', [
-        ['I'],
-    ]],
-    ['C'],
-    ['D', [
-        ['E'],
-        ['F'],
-    ]],
-    ['H'],
-]];
+                   ['A', [
+                         ['I'],
+                         ]
+                   ],
+                   ['C'],
+                   ['D', [
+                         ['E'],
+                         ['F'],
+                         ]
+                   ],
+                   ['H'],
+                   ]];
 
 $expected3 = ['I', [
-    ['A', [
-        ['B', [
-            ['C'],
-            ['D', [
-                ['E'],
-                ['F'],
-            ]],
-            ['H'],
-        ]],
-    ]],
-]];
+                   ['A', [
+                         ['B', [
+                               ['C'],
+                               ['D', [
+                                     ['E'],
+                                     ['F'],
+                                     ]],
+                               ['H'],
+                               ]],
+                         ]],
+                   ]];
 
 $expected4 = ['B', [
-    ['A', [
-        ['I'],
-    ]],
-    ['C'],
-    ['D', [
-        ['E'],
-        ['F'],
-    ]],
-    ['H'],
-]];
+                   ['A', [
+                         ['I'],
+                         ]],
+                   ['C'],
+                   ['D', [
+                         ['E'],
+                         ['F'],
+                         ]],
+                   ['H'],
+                  ]];
 
-print_r(combine($branch1, $branch2, $branch3));
+var_dump(combine($branch1, $branch2, $branch3) === $expected1);
+var_dump(combine($branch2, $branch1, $branch3) === $expected2);
+var_dump(combine($branch3, $branch2, $branch1) === $expected3);
+var_dump(combine($branch3, $branch2, $branch1) === $expected4);
+//print_r(combine($branch2, $branch3));
+/*$actual1 = combine($branch1, $branch2, $branch3);
+$actual2 = combine($branch2, $branch1, $branch3);
+$actual3 = combine($branch3, $branch2, $branch1);
+$actual4 = combine($branch2, $branch3);
+
+$this->assertEquals($expected1, sortTree($actual1));
+$this->assertEquals($expected2, sortTree($actual2));
+$this->assertEquals($expected3, sortTree($actual3));
+$this->assertEquals($expected4, sortTree($actual4));*/
