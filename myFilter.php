@@ -29,14 +29,26 @@ function filter($funcFirst, $tree)
         $newNode['children'] = $newChildren;
     }
     ksort($newNode);*/
-    $newNode = ($funcFirst($tree)) ? $tree : [];
-    $children = $tree['children'] ?? [];
-    $newChildren = array_filter($children, function ($node) use ($funcFirst) {
-        var_dump($node['name']);
-        return $funcFirst($node);
-    });
 
-    return $newChildren;
+    if ($funcFirst($tree)) {
+        $newNode = $tree;
+    } else {
+        return null;
+    }
+
+    $children = $tree['children'] ?? [];
+
+    if (isDirectory($tree)) {
+        $new = array_map(fn($node) => filter($funcFirst, $node), $children);
+
+        $newChilren = array_values(array_filter($new, fn($child) => !empty($child)));
+
+        $newNode['children'] = $newChilren;
+    }
+
+    ksort($newNode);
+
+    return $newNode;
 }
 
 $tree = mkdir('/', [
@@ -84,18 +96,20 @@ $expected = [
     'name' => '/',
     'type' => 'directory',
 ];
-var_dump($expected === $actual);
-print_r($actual);
+//var_dump($expected === $actual);
+//print_r($actual);
+//print_r($children);
+
 
 $tree = mkdir('/', [
-    mkdir('etc', [
-        mkdir('nginx', [
-            mkdir('conf.d'),
-        ]),
-        mkdir('consul', [
-            mkfile('config.json'),
-        ]),
-      ]),
+                   mkdir('etc', [
+                                mkdir('nginx', [
+                                               mkdir('conf.d'),
+                                               ]),
+                                mkdir('consul', [
+                                                mkfile('config.json'),
+                                                ]),
+                                ]),
       mkfile('hosts'),
 ]);
 
@@ -118,8 +132,8 @@ $expected = [
       'type' => 'directory',
     ],
     [
-        'name' => 'hosts',
         'meta' => [],
+        'name' => 'hosts',
         'type' => 'file',
     ],
   ],
@@ -127,7 +141,8 @@ $expected = [
   'name' => '/',
   'type' => 'directory',
 ];
-//var_dump($expected == $actual);
+//var_dump($expected === $actual);
+//print_r($tree);
 //print_r($actual);
 $tree = mkdir('/', [
     mkdir('etc', [
@@ -144,5 +159,5 @@ $tree = mkdir('/', [
 $actual = filter(fn($node) => !isDirectory($node), $tree);
 
 $expected = null;
-//var_dump($expected === $actual);
+var_dump($expected === $actual);
 //print_r($actual);

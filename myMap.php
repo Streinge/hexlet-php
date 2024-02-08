@@ -28,25 +28,7 @@ function map($funcFirst, $tree)
     return $newNode;
 }
 
-function filter($funcFirst, $tree)
-{
 
-    $newNode = ($funcFirst($tree)) ? $tree : [];
-    $children = $tree['children'] ?? [];
-
-    $newChildren = [];
-    foreach ($children as $node) {
-        if ($funcFirst($node)) {
-            $newChildren[] = filter($funcFirst, $node);
-        }
-    }
-
-    $newNode['children'] = $newChildren;
-
-    ksort($newNode);
-
-    return $newNode;
-}
 
 $tree = mkdir('/', [
                    mkdir('eTc', [
@@ -135,19 +117,7 @@ $expected = [
 
 //print_r(map(fn($node) => array_merge($node, ['name' => strtoupper(getName($node))]), $tree));
 
-$tree = mkdir('/', [
-    mkdir('etc', [
-        mkdir('nginx', [
-            mkdir('conf.d'),
-        ]),
-        mkdir('consul', [
-            mkfile('config.json'),
-        ]),
-      ]),
-      mkfile('hosts'),
-]);
 
-$actual = filter(fn($node) => isDirectory($node), $tree);
 
 $expected = [
     'children' => [
@@ -183,47 +153,4 @@ $expected = [
 //var_dump($expected === $actual);
 //print_r($actual);
 
-$tree = mkdir('/', [
-    mkdir('etc', [
-        mkdir('nginx', [
-            mkdir('conf.d'),
-        ]),
-        mkdir('consul', [
-            mkfile('config.json'),
-        ]),
-      ]),
-      mkfile('hosts'),
-]);
 
-$names = ['/', 'hosts', 'etc', 'consul'];
-$actual = filter(fn($node) => in_array(getName($node), $names), $tree);
-
-$expected = [
-  'children' => [
-    [
-      'children' => [
-        [
-          'children' => [],
-          'meta' => [],
-          'name' => 'consul',
-          'type' => 'directory',
-        ],
-      ],
-      'meta' => [],
-      'name' => 'etc',
-      'type' => 'directory',
-    ],
-    [
-      'name' => 'hosts',
-      'meta' => [],
-      'type' => 'file',
-    ],
-  ],
-  'meta' => [],
-  'name' => '/',
-  'type' => 'directory',
-];
-var_dump($expected === $actual);
-print_r($actual);
-//var_dump(filter(fn($node) => isDirectory($node), $tree) === $treeTest);
-//var_dump(['name' => '/', 'type' => 'directory', 'meta' => [], 'children' => ['a', 'b']] === ['type' => 'directory', 'name' => '/', 'meta' => [], 'children' => ['a', 'b']]);
