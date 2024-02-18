@@ -34,7 +34,7 @@ function stringify($value, string $replacer = ' ', int $spacesCount = 1): string
         // $currentValue, которые одновременно подаются в callback функцию как 
         // $key, $val !!! то есть одновременно перебираются - крутяк !!!
         $lines = array_map(
-            fn($key, $val) => "{$currentIndent}{$key}: {$iter($val, $depth + 1)}",
+            fn($key, $val) => "{$currentIndent}{$key}: {$iter($val, $depth + 2)}",
             array_keys($currentValue),
             $currentValue
         );
@@ -53,3 +53,50 @@ function stringify($value, string $replacer = ' ', int $spacesCount = 1): string
     return $iter($value, 1);
 }
 // END
+
+$exeptedNestedResult = [
+    '  common' => [
+                '+ follow' => false,
+                '  setting1' => 'Value 1',
+                '- setting2' => 200,
+                '- setting3' => true,
+                '+ setting3' => null,
+                '+ setting4' => 'blah blah',
+                '+ setting5' => [
+                               '  key5' =>  'value5'
+                                ],
+                '  setting6' => [
+                              '  doge' => [
+                                        '- wow' => '',
+                                        '+ wow' => 'so much'
+                                        ],
+                              '  key' => 'value',
+                              '+ ops' => 'vops'
+                                ]
+                ],
+     '  group1' => [
+                   '- baz' => 'bas',
+                   '+ baz' => 'bars',
+                   '  foo' => 'bar',
+                   '- nest' => [
+                               '  key' => 'value'
+                               ],
+                   '+ nest' => 'str'
+                   ],
+     '- group2' => [
+                   '  abc' => 12345,
+                   '  deep' => [
+                               '  id' => 45
+                               ]
+                   ],
+     '+ group3' => [
+                   '  deep' => [
+                             '  id' => [
+                                     '  number' => 45
+                                     ]
+                             ],
+                   ' fee' => 100500
+                   ]
+       ];
+
+print_r(stringify($exeptedNestedResult, '', 2));
