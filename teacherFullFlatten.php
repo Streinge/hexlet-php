@@ -2,10 +2,6 @@
 
 namespace Hexlet\Php;
 
-<?php
-
-namespace App\Solution;
-
 // BEGIN
 function flatten($tree)
 {
