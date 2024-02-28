@@ -2,29 +2,48 @@
 
 namespace Hexlet\Php;
 
-require_once 'Address.php';
+require_once 'ComparableInterface.php';
 
-use Hexlet\Php\Adress;
+// BEGIN (write your solution here)
+use Hexlet\Php\ComparableInterface;
 
-class User
+class User implements ComparableInterface
 {
+    private $id;
     private $name;
-    private $listAdresses;
 
-    public function __construct($name)
+    // Интерфейсные функции
+
+    public function __construct($id, $name)
     {
+        $this->id = $id;
         $this->name = $name;
     }
 
-    public function addAddress(Address $address)
+    public function getId()
     {
-        $listAdresses[] = $address;
-        return $this->$listAdresses;
+        return $this->id;
     }
-//getAddresses() — возвращает массив адресов пользователя.
-//getName() — возвращает имя пользователя.
-}
 
-$user1 = new User('Ivan');
-var_dump($user1);
-$user1->addAddress(new Address(''));
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    // Не интерфейсные функции
+
+    public function __toString()
+    {
+        return "({$this->getId()}, {$this->getName()})";
+    }
+
+    public function compareTo(ComparableInterface $user)
+    {
+        return $this->getId() === $user->getId();
+    }
+}
+// END
+$user1 = new User(4, 'tolya');
+$user2 = new User(1, 'petya');
+
+var_dump($user1->compareTo($user2)); // false
