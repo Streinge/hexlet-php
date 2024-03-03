@@ -51,6 +51,8 @@ class Node
         return $balanced;
     }
     // END
+
+    
 }
 
 $tree = new Node(
