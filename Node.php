@@ -124,26 +124,57 @@ class Node
         if ($this->key === $key) {
             return $this;
         } else {
-            if ($this->key > $key) {
-                if ($this->left) {
-                    $result = $this->left->search($key);
-                    if ($result) {
-                        return ($result);
-                    }
-                }
+            if ($this->key > $key && $this->left) {
+                return $this->left->search($key);
             }
-            if ($this->key <= $key) {
-                if ($this->right) {
-                    $result = $this->right->search($key);
-                    if ($result) {
-                        return $result;
-                    }
-                }
+            if ($this->key <= $key && $this->right) {
+                return $this->right->search($key);
             }
         }
         return null;
     }
+
+    public function insert($key)
+    {
+        if (!($this->key)) {
+            $this->key = $key;
+            return $this;
+        } else {
+            if (!($this->search($key))) {
+                $new = new Node($key);
+                if ($key < $this->key) {
+                    if (!($this->left)) {
+                        return $this->left = $new;
+                    } else {
+                        $this->left->insert($key);
+                    }
+                } elseif ($key >= $this->key) {
+                    if (!($this->right)) {
+                        return $this->right = $new;
+                    } else {
+                        $this->right->insert($key);
+                    }
+                }
+            }
+        }
+    }
 }
+
+$tree = new Node();
+$tree->insert(9);
+$tree->insert(17);
+$tree->insert(4);
+$tree->insert(3);
+$tree->insert(6);
+var_dump($tree->getKey()); // 9
+var_dump($tree->getLeft()->getKey()); // 4
+var_dump($tree->getRight()->getKey()); // 17
+var_dump($tree->getLeft()->getLeft()->getKey()); // 3
+var_dump($tree->getLeft()->getRight()->getKey()); // 6
+
+
+
+
 
 $tree = new Node(
     9,
@@ -167,14 +198,14 @@ $tree = new Node(
     )
 );
 
-$node = $tree->search(6);
+//$node = $tree->search(6);
 
-var_dump($node->getKey()); // 6
-var_dump($node->getLeft()->getKey()); // 5
-var_dump($node->getRight()->getKey()); // 7
+//var_dump($node->getKey()); // 6
+//var_dump($node->getLeft()->getKey()); // 5
+//var_dump($node->getRight()->getKey()); // 7
 
-var_dump($tree->search(35)); // null
-var_dump($tree->search(3)->getLeft()); // null
+//var_dump($tree->search(35)); // null
+//var_dump($tree->search(3)->getLeft()); // null
 $tree = new Node(
     9,
     new Node(
