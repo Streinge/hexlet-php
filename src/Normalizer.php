@@ -15,17 +15,21 @@ use Tightenco\Collect\Support\Collection;
 function normalize(array $listCities)
 {
     $coll = collect($listCities);
-    $filtered = $coll->map(function ($item) {
+    $normalazed = $coll->map(function ($item) {
         return collect($item)->map(function ($item1) {
             return trim(strtolower($item1));
-        })->unique()->all();
-    });
-
-    $grouped = $filtered->mapToGroups(function ($item) {
+        })->all();
+    })
+      ->unique()
+      ->mapToGroups(function ($item) {
         return [$item['country'] => $item['name']];
-    });
+      })
+      ->map(function ($item1) {
+        return $item1->sort()->values()->all();
+      })
+      ->sortKeys();
 
-    return $grouped->all();
+    return $normalazed->all();
 }
 
 $raw = [
@@ -48,6 +52,10 @@ $raw = [
     [
         'name' => 'samarA',
         'country' => '  ruSsiA'
+    ],
+    [
+        'name' => 'Seattle',
+        'country' => 'usa'
     ],
 ];
 $actual = normalize($raw);
