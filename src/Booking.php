@@ -14,22 +14,81 @@ use Carbon\Carbon;
 
 class Booking
 {
-    private $busy = [];
+    public $busy = [];
 
-    public function book($strDate1, $strDate2)
+    public function book($strBegin, $strEnd)
     {
-        $date1 = Carbon::create($strDate1);
-        $date2 = Carbon::create($strDate2);
-        var_dump($date1 == $date2);
-        $busy[] = [$strDate1, $strDate2];
-        $this->busy = $busy;
-        
+        $dateBegin = Carbon::create($strBegin);
+        $dateEnd = Carbon::create($strEnd);
+        if ($dateEnd->lessThanOrEqualTo($dateBegin)) {
+            return false;
+        }
 
-        return $this;
+        if (!$this->busy) {
+            $this->busy[] = [$dateBegin, $dateEnd];
+            return true;
+        }
+        $result = [];
+        foreach ($this->busy as $period) {
+            $condition1 = $dateBegin->lessThanOrEqualTo($period[0]) && $dateEnd->lessThanOrEqualTo($period[0]);
+            $condition2 = $period[1]->lessThanOrEqualTo($dateBegin) && $period[1]->lessThanOrEqualTo($dateEnd);
+            if ($condition1 || $condition2) {
+                $result = [$dateBegin, $dateEnd];
+            } else {
+                return false;
+            }
+        }
+        $this->busy[] = $result;
+        return true;
     }
 }
 
 $booking = new Booking();
-
-var_dump($booking);
-var_dump($booking->book('11-11-2008', '11-11-2008'));
+echo "Должно быть FALSE\n";
+$result0 = $booking->book('10-11-2008', '05-11-2008');
+var_dump($result0);//false
+echo "Должно быть TRUE\n";
+$result1 = $booking->book('11-11-2008', '13-11-2008');
+var_dump($result1); //true
+echo "Должно быть FALSE\n";
+$result2 = $booking->book('12-11-2008', '12-11-2008');
+var_dump($result2); //false
+echo "Должно быть FALSE\n";
+$result3 = $booking->book('10-11-2008', '12-11-2008');
+var_dump($result3); //false
+echo "Должно быть FALSE\n";
+$result4 = $booking->book('12-11-2008', '14-11-2008');
+var_dump($result4);//false
+echo "Должно быть TRUE\n";
+$result5 = $booking->book('10-11-2008', '11-11-2008');
+var_dump($result5);
+echo "Должно быть FALSE\n";
+$result55 = $booking->book('12-11-2008', '13-11-2008');
+var_dump($result55);//false
+echo "Должно быть FALSE\n";
+$result6 = $booking->book('13-11-2008', '13-11-2008');
+var_dump($result6);//false
+echo "Должно быть TRUE\n";
+$result7 = $booking->book('13-11-2008', '14-11-2008');
+var_dump($result7);//true
+echo "Должно быть FALSE\n";
+$result8 = $booking->book('08-11-2008', '18-11-2008');
+var_dump($result8);//false
+echo "Должно быть TRUE\n";
+$result9 = $booking->book('08-05-2008', '18-05-2008');
+var_dump($result9);//true
+echo "Должно быть FALSE\n";
+$result10 = $booking->book('09-05-2008', '10-05-2008');
+var_dump($result10);//false
+echo "Должно быть FALSE\n";
+$result11 = $booking->book('08-05-2008', '20-05-2008');
+var_dump($result11);//false
+echo "Должно быть FALSE\n";
+$result12 = $booking->book('07-05-2008', '18-05-2008');
+var_dump($result12);//false
+echo "Должно быть FALSE\n";
+$result13 = $booking->book('08-05-2008', '18-05-2008');
+var_dump($result13);//false
+echo "Должно быть FALSE\n";
+$result14 = $booking->book('08-05-2008', '18-11-2008');
+var_dump($result14);//false
