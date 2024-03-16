@@ -4,10 +4,9 @@ namespace Hexlet\Php;
 
 const SEC_PER_WEEK = 604800;
 const SEC_PER_DAY = 86400;
-const NUMBER_SATURDAY = 6;
-const NUMBER_SUNDAY = 7;
-const NUMBER_WORK_DAYS = 5;
+const NUMBER_WEEK_DAYS = 7;
 const RUS_NUMBER_SUNDAY = 7;
+const WEEKEND = [6, 7];
 
 function search(array $data, int $number): int
 {
@@ -37,27 +36,58 @@ function search(array $data, int $number): int
 
 function weekend(string $begin, string $end): int
 {
-    $fullWeeks = (int) floor((strtotime($end) - strtotime($begin) + SEC_PER_DAY) / SEC_PER_WEEK);
+    $floatWeeks = (strtotime($end) - strtotime($begin) + SEC_PER_DAY) / SEC_PER_WEEK;
+    $fullWeeks = (int) floor($floatWeeks);
+
+    if ($floatWeeks === $fullWeeks) {
+        return $fullWeeks * 2;
+    }
 
     $numberBegin = (date('w', strtotime($begin)) === '0') ? RUS_NUMBER_SUNDAY : (int) date('w', strtotime($begin));
-    $numberEnd = (date('w', strtotime($end)) === '0') ? RUS_NUMBER_SUNDAY : (int) date('w', strtotime($end))
-    ;
-    if ($numberBegin - $numberEnd === 1) {
-        $nonCountDays = 0;
-    } elseif (($numberEnd - $numberBegin) >= 0) {
-        $nonCountDays = ($numberEnd === NUMBER_SATURDAY || $numberEnd === NUMBER_SUNDAY)
-            ? $numberEnd - NUMBER_WORK_DAYS : 0;
-    } else {
-        $nonCountDays = ($numberEnd === NUMBER_SATURDAY || $numberEnd === NUMBER_SUNDAY)
-            ? $numberEnd - NUMBER_WORK_DAYS : NUMBER_SUNDAY - NUMBER_WORK_DAYS;
+    $numberEnd = (date('w', strtotime($end)) === '0') ? RUS_NUMBER_SUNDAY : (int) date('w', strtotime($end));
+
+    if ($begin === $end) {
+        return (in_array($numberBegin, WEEKEND, true)) ? 1 : 0;
     }
-    return $fullWeeks * 2 + $nonCountDays;
+
+    $numberNonCountDays = ($numberEnd - $numberBegin >= 0)
+        ? $numberEnd - $numberBegin + 1 : NUMBER_WEEK_DAYS + $numberEnd - $numberBegin + 1;
+
+    $count = 0;
+    for ($i = 0; $i < $numberNonCountDays; $i++) {
+        $testedDay = ($numberBegin + $i > NUMBER_WEEK_DAYS)
+            ? ($numberBegin + $i) - NUMBER_WEEK_DAYS : $numberBegin + $i;
+
+        if (in_array($testedDay, WEEKEND, true)) {
+            $count++;
+        }
+    }
+    return $fullWeeks * 2 + $count;
 }
 
-var_dump('Должно быть 10', weekend('27.02.2024', '05.04.2024'));
-var_dump('Должно быть 0', weekend('18.03.2024', '18.03.2024'));
-var_dump('Должно быть 8', weekend('01.03.2024', '26.03.2024'));
-var_dump('Должно быть 11', weekend('27.02.2024', '06.04.2024'));
-var_dump('Должно быть 12', weekend('27.02.2024', '07.04.2024'));
-var_dump('Должно быть 10', weekend('03.03.2024', '06.04.2024'));
-var_dump('Должно быть 11', weekend('03.03.2024', '07.04.2024'));
+function rgb(int $r, int $g, int $b): int
+{
+    return $r * 1 + $g * 256 + $b * 65536;
+}
+
+function fiborow(int $limit): string
+{
+    if ($limit === 0) {
+        return "0";
+    }
+    if (($limit === 1)) {
+        return "0 1";
+    }
+
+    $tested = 1;
+    $resultArray = [0, 1, 1];
+
+    while ($tested <= $limit) {
+        $tested = $resultArray[(count($resultArray) - 1)] + $resultArray[(count($resultArray) - 2)];
+        $resultArray[] = $tested;
+    }
+
+    array_pop($resultArray);
+
+    return implode(" ", $resultArray);
+}

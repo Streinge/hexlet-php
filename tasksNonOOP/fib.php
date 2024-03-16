@@ -13,4 +13,4 @@ function fib(int $sequenceNumber): int
     return fib($sequenceNumber-1) + fib($sequenceNumber-2);
 }
 
-echo fib(25);
+echo fib(10);
