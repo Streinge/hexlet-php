@@ -5,8 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Моя страница &#128512;</title>
     <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <style>
+      div {
+        width: 500px;
+        height: 500px;
+  
+        background: #333333;
+      }
+  
+      #main {
+        color: white;
+        width: 750px;
+      }
+  
+      .text-white {
+        color: white;
+      }
+  
+      .alert {
+        height: 350px;
+        color: gray;
+      }
+  
+      div {
+        background: blue;
+      }
+  
+      .alert-warning {
+        background: #000000;
+        color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main" class="text-white alert alert-warning">Какой-то текст</div>
     <header>
         <img src="streinge_small.png" alt="Логотип">
         <!-- Логотип сайта -->
@@ -45,6 +77,7 @@
           PHP разработки в онлайн-школе <a href="https://ru.hexlet.io/">Hexlet</a>
         </p>
       </main>
+      <p id="blue" class="red">Какого же цвета будет параграф?</p>
       <section>
         <h2>Мои достоинства</h2>
         <ul>
@@ -55,21 +88,31 @@
       </section>
       <section class="news">
         <h2>Новости</h2>
+
         <article>
-          <h3>Новость 1</h3>
+          <h2>Новость 1</h2>
           <p>Текст новости 1</p>
           <a href="#">Подробнее</a>
         </article>
+
         <article>
-          <h3>Новость 2</h3>
+          <h2>Новость 2</h2>
           <p>Текст новости 2</p>
           <a href="#">Подробнее</a>
         </article>
     
         <article>
-          <h3>Новость 3</h3>
+          <h2>Новость 3</h2>
           <p>Текст новости 3</p>
           <a href="#">Подробнее</a>
+          <section>
+            <h2>Похожие новости</h2>
+      
+            <article>
+              <h2>Похожая новость 1</h2>
+              <p>Текст новости</p>
+            </article>
+          </section>
         </article>
       </section>
       
@@ -85,6 +128,7 @@
           <h2>История 2</h2>
           <p>Текст истории</p>
         </article>
+
       </section>
 </body>
 </html>

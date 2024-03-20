@@ -1,18 +1,11 @@
-
-#main-title {
-    color: white;
-    font-size: 20px;
-    text-align: center;
-  }
-  
-.content {
-    background-color: black;
-  }
-  
 p {
-    color: white;
-  }
+  color: green;
+}
 
-.news article h2 {
-    font-size: 32px;
-  }
+.red {
+  color: red;
+}
+
+#blue {
+  color: blue;
+}
