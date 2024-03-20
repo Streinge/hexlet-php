@@ -36,6 +36,11 @@ class Url implements UrlInterface
     {
         return parse_url($this->url, PHP_URL_HOST);
     }
+
+    public function getHostnew()
+    {
+        return;
+    }
 }
 
 $url = new Url('http://yandex.ru?key=value&key2=value2');
@@ -49,4 +54,5 @@ var_dump($url->getQueryParams());
 var_dump($url->getQueryParam('key')); // value
 // второй параметр - значение по умолчанию
 var_dump($url->getQueryParam('key2', 'lala')); // value2
-var_dump($url->getQueryParam('new', 'ehu')); // ehu
+var_dump($url->getQueryParam('new', 'ehu'));
+var_dump($url->getHostnew()); // ehu
