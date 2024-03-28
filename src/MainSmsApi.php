@@ -11,15 +11,12 @@ use SalesRender\Plugin\Core\Chat\Components\MessageStatusSender\MessageStatusSen
 class MainSmsApi
 {
     private Client $client;
-    private string $email;
-    private string $password;
-    private string $sender;
+    private string $json;
 
-    public function __construct(string $email, string $password, string $sender)
+    public function __construct(string $json)
     {
         $this->email = $email;
-        $this->password = $password;
-        $this->sender = $sender;
+        $this->text = $text;
         $this->client = new Client(
             ['http_errors' => false]
         );
@@ -32,7 +29,7 @@ class MainSmsApi
             'password' => $this->password,
             'remember' => true
         ];
-        https://api.mainsms.ru/v1
+
         $url = 'https://my.zorra.com/api/v2/auth/login';
 
         $response = $this->makePostRequest($url, $authData);
@@ -144,6 +141,36 @@ class MainSmsApi
     }
 }
 
-$user = new MainSmsApi('email', 'user', 'password');
+$email = 'olesof@mail.ru';
 
-var_dump($user);
+
+$API_TOKEN = 'a8e7adc82db18a06e9d58baa6c6adc69';
+
+$user = new Client();
+$headers = [
+'Authorization' => 'Bearer' .  $API_TOKEN,
+'Content-Type' => 'application/json'
+];
+# узнать баланс
+$url = 'https://api.mainsms.ru/v1/email/balance';
+$request = $user->get($url, ['headers' => $headers]);
+echo $request->getBody();
+$json = [
+    "from_email" => "osofonov@ya.ru",
+    "from_name" => "Oleg",
+    "to" => "streinge77@yandex.ru",
+    "subject" => "Hello",
+    "text" => "Hello, Bob!",
+    "html" => "<h1>Hello, Bob!</h1>",
+    "payment" => "credit",
+    "smtp_headers" => ["Client-Id" => "123"]
+    ];
+
+$options = ['headers' => $headers, 'body' => json_encode($json)];
+# отправить сообщение
+//$url = 'https://api.mainsms.ru/v1/email/messages';
+//echo "\n\n";
+
+//$requestMessage = $user->post($url, $options);
+//echo $requestMessage->getStatusCode();
+
