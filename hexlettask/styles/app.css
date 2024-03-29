@@ -32,7 +32,10 @@ html {
   .article {
     /* BEGIN (write your solution here) */
     column-count: 2;
+    margin-top: 0;
+    column-width: normal;
     column-gap: 50px;
+    column-rule: 1px solid #3d405b;
     /* END */
   }
   
@@ -44,6 +47,8 @@ html {
   
     /* BEGIN (write your solution here) */
     column-span: all;
+
+    break-inside: avoid;
     /* END */
   
     background: #3d405b;
@@ -51,7 +56,8 @@ html {
   
   .applicants-header {
     /* BEGIN (write your solution here) */
-    
+    column-count: 2;
+    margin-top: 0;
     /* END */
   }
   
