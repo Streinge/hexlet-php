@@ -1,50 +1,62 @@
-@font-face {
-    font-weight: normal;
-    font-family: Comfortaa;
-    src: url("../assets/fonts/Comfortaa-Regular.ttf");
-  }
-  
-  @font-face {
-    font-weight: bold;
-    font-family: Comfortaa;
-    src: url("../assets/fonts/Comfortaa-Bold.ttf");
+html {
+    color: #463f3a;
+    font: 18px/1.5 sans-serif;
   }
   
   body {
-    margin: 0;
-    padding: 0;
-  
-    color: #eee;
-    font: 18px/1.5 Comfortaa, sans-serif;
-  
-    background: #222831;
+    width: 980px;
+    margin: 0 auto;
+    padding: 70px;
   }
   
   h1,
   h2,
   h3,
-  h4 {
-    color: #fd7014;
-  }
-  
-  h1 {
+  p {
     margin-top: 0;
   }
   
-  .container {
-    width: 1280px;
-    margin: 0 auto;
-    padding: 50px 30px;
+  h1 {
+    color: #e07a5f;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
   }
   
-  .definitions {
-    padding: 30px;
+  img {
+    max-width: 100%;
+    height: auto;
   
-    background: #393e46;
+    vertical-align: middle;
   }
   
-  .definitions-term {
-    color: #fd7014;
+  .article {
+    /* BEGIN (write your solution here) */
+    column-count: 2;
+    column-gap: 50px;
+    /* END */
+  }
+  
+  .applicants {
+    margin: 50px 0;
+    padding: 20px;
+  
+    color: #f4f1de;
+  
+    /* BEGIN (write your solution here) */
+    column-span: all;
+    /* END */
+  
+    background: #3d405b;
+  }
+  
+  .applicants-header {
+    /* BEGIN (write your solution here) */
+    
+    /* END */
+  }
+  
+  .member-name {
+    margin: 20px 0 0;
+  
     font-weight: bold;
-    font-variant: small-caps;
   }
